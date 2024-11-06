@@ -1,5 +1,6 @@
 import plotly.express as px
 import seaborn as sns
+from shiny import reactive
 from shiny.express import render, input, ui
 from shinywidgets import render_plotly
 import palmerpenguins # This package provides the Palmer Penguins dataset
@@ -21,6 +22,8 @@ import palmerpenguins # This package provides the Palmer Penguins dataset
 # Load the dataset into a pandas DataFrame.
 # Use the built-in function to load the Palmer Penguins dataset
 penguins_df = palmerpenguins.load_penguins()
+
+
 
 # -----------------------------------------------------
 # Define User Interface (ui)
@@ -99,20 +102,20 @@ with ui.layout_columns():
         ui.card_header("Plotly Histogram: Distribution of Penguins by Body Mass")
         @render_plotly
         def plot1():
-            return px.histogram(penguins_df, x="body_mass_g", color="species", nbins=input.plotly_bin_count())
+            return px.histogram(filtered_data(), x="body_mass_g", color="species", nbins=input.plotly_bin_count())
             
     with ui.card(full_screen=True):
         ui.card_header("Seaborn Histogram: Distribution of Penguins by Flipper Length")
         @render.plot
         def plot2():
-            return sns.histplot(data=penguins_df, x="flipper_length_mm", hue="species", bins=input.seaborn_bin_count())
+            return sns.histplot(data=filtered_data(), x="flipper_length_mm", hue="species", bins=input.seaborn_bin_count())
 
 # Display Plotly Scatterplot
 with ui.card(full_screen=True):
     ui.card_header("Plotly Scatterplot: Species")
     @render_plotly
     def plotly_scatterplot():
-        return px.scatter(data_frame=penguins_df, x="bill_length_mm", y="body_mass_g", color="species", hover_name="island", symbol="sex")
+        return px.scatter(data_frame=filtered_data(), x="bill_length_mm", y="body_mass_g", color="species", hover_name="island", symbol="sex")
 
 # --------------------------------------------------------
 # Reactive calculations and effects
